@@ -300,7 +300,7 @@ function confirmBooking() {
     return;
   }
 
-  fetch('http://localhost:5000/api/book-appointment', {
+  fetch('https://tranquil-aqyr.onrender.com/api/book-appointment', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ service, datetime, phone, email, name })
@@ -418,7 +418,7 @@ function confirmBooking() {
   const email = document.getElementById('login-email').value;
   const password = document.getElementById('login-password').value;
 
-  fetch('http://localhost:5000/api/login', {
+  fetch('https://tranquil-aqyr.onrender.com/api/login', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ email, password })
@@ -451,7 +451,7 @@ function signup() {
   const email = document.querySelector('#signup-form input[type="email"]').value;
   const password = document.querySelector('#signup-form input[type="password"]').value;
 
-  fetch('http://localhost:5000/api/signup', {
+  fetch('https://tranquil-aqyr.onrender.com/api/signup', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ name, email, password })
@@ -491,7 +491,7 @@ function signup() {
     function sendResetCode() {
       const email = document.getElementById('reset-email').value;
   
-      fetch('http://localhost:5000/api/send-reset-code', {
+      fetch('https://tranquil-aqyr.onrender.com/api/send-reset-code', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ email })
@@ -510,7 +510,7 @@ function signup() {
       const code = document.getElementById('reset-code').value;
       const password = document.getElementById('new-password').value;
   
-      fetch('http://localhost:5000/api/reset-password', {
+      fetch('https://tranquil-aqyr.onrender.com/api/reset-password', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ email, code, password })

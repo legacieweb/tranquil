@@ -46,7 +46,7 @@ let groupedData = {};
 let isSignupMode = false;
 
 window.addEventListener('DOMContentLoaded', async () => {
-  const res = await fetch('http://localhost:5000/api/admin-exists');
+  const res = await fetch('https://tranquil-aqyr.onrender.com/api/admin-exists');
   const { exists } = await res.json();
 
   isSignupMode = !exists;
@@ -65,7 +65,7 @@ async function submitAuth() {
   }
 
   const endpoint = isSignupMode ? 'admin-signup' : 'admin-login';
-  const res = await fetch(`http://localhost:5000/api/${endpoint}`, {
+  const res = await fetch(`https://tranquil-aqyr.onrender.com/api/${endpoint}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ password })
@@ -84,7 +84,7 @@ async function submitAuth() {
 }
 
 function loadAppointments() {
-  fetch('http://localhost:5000/api/all-appointments')
+  fetch('https://tranquil-aqyr.onrender.com/api/all-appointments')
     .then(res => res.json())
     .then(data => {
       groupedData = groupByUser(data.appointments);

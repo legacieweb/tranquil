@@ -296,59 +296,58 @@
 </section>
 <!-- Contact Section -->
 <section id="contact" class="py-20 px-4 sm:px-6 bg-gradient-to-br from-pink-50 to-purple-100 overflow-x-hidden">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-4xl font-bold text-center mb-12" data-aos="fade-up">Get in Touch</h2>
-  
-      <!-- Info & Form Layout -->
-      <div class="flex flex-col lg:flex-row items-start justify-between gap-8">
-  
-        <!-- Contact Info -->
-        <div class="w-full lg:w-1/2 space-y-6 text-center lg:text-left px-2" data-aos="fade-right">
-          <div class="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-xl transition">
-            <h3 class="text-xl font-semibold mb-2">📧 Email</h3>
-            <p class="text-gray-700 break-words">contact@tranquilessence.com</p>
-          </div>
-          <div class="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-xl transition">
-            <h3 class="text-xl font-semibold mb-2">📞 Phone</h3>
-            <p class="text-gray-700">(123) 456-7890</p>
-          </div>
-          <div class="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-xl transition">
-            <h3 class="text-xl font-semibold mb-2">📍 Visit</h3>
-            <p class="text-gray-700">456 Zen Avenue, Blissville</p>
-          </div>
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-4xl font-extrabold text-center mb-12 text-purple-700" data-aos="fade-up">Let's Connect 🌸</h2>
+
+    <!-- Info & Form Layout -->
+    <div class="flex flex-col lg:flex-row items-start justify-between gap-10">
+
+      <!-- Contact Info -->
+      <div class="w-full lg:w-1/2 space-y-8 text-center lg:text-left px-2" data-aos="fade-right">
+        <div class="bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
+          <h3 class="text-2xl font-bold text-purple-700 mb-2">📧 Email Us</h3>
+          <p class="text-gray-600">contact@tranquilessence.com</p>
         </div>
-  
-        <!-- Contact Form -->
-        <div class="w-full lg:w-1/2 bg-white rounded-xl shadow-lg p-6 sm:p-8" data-aos="fade-left">
-          <form>
-            <div class="mb-4">
-              <label for="name" class="block text-gray-700 font-semibold mb-2">Your Name</label>
-              <input type="text" id="name" placeholder="Enter your name"
-                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300" />
-            </div>
-  
-            <div class="mb-4">
-              <label for="email" class="block text-gray-700 font-semibold mb-2">Email Address</label>
-              <input type="email" id="email" placeholder="you@example.com"
-                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300" />
-            </div>
-  
-            <div class="mb-4">
-              <label for="message" class="block text-gray-700 font-semibold mb-2">Message</label>
-              <textarea id="message" rows="4" placeholder="How can we help you?"
-                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300"></textarea>
-            </div>
-  
-            <button type="submit"
-                    class="w-full bg-purple-600 text-white font-semibold py-2 rounded-lg hover:bg-purple-700 transition">
-              Send Message
-            </button>
-          </form>
+        <div class="bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
+          <h3 class="text-2xl font-bold text-purple-700 mb-2">📞 Call Us</h3>
+          <p class="text-gray-600">(123) 456-7890</p>
         </div>
-  
+        <div class="bg-white/70 backdrop-blur-lg p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
+          <h3 class="text-2xl font-bold text-purple-700 mb-2">📍 Visit Us</h3>
+          <p class="text-gray-600">456 Zen Avenue, Blissville</p>
+        </div>
       </div>
+
+      <!-- Contact Form -->
+      <form id="contact-form" class="w-full lg:w-1/2 bg-white/80 backdrop-blur-lg rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300" data-aos="fade-left">
+        <div class="mb-6">
+          <label for="name" class="block text-gray-700 font-semibold mb-2">Name</label>
+          <input type="text" id="name" name="name" placeholder="Your Full Name"
+            class="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none transition duration-300" required />
+        </div>
+
+        <div class="mb-6">
+          <label for="email" class="block text-gray-700 font-semibold mb-2">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com"
+            class="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none transition duration-300" required />
+        </div>
+
+        <div class="mb-6">
+          <label for="message" class="block text-gray-700 font-semibold mb-2">Message</label>
+          <textarea id="message" name="message" rows="5" placeholder="Type your message..."
+            class="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none transition duration-300 resize-none" required></textarea>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-purple-600 text-white text-lg font-bold py-3 rounded-lg hover:bg-purple-700 hover:shadow-xl transition-all duration-300">
+          ✨ Send Message
+        </button>
+      </form>
+
     </div>
-  </section>
+  </div>
+</section>
+
   
 
 <!-- Footer -->
@@ -392,7 +391,40 @@
       
     </div>
   </footer>
-  
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+      e.preventDefault(); // prevent default submit behavior
+    
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+    
+      if (!name || !email || !message) {
+        alert('Please fill in all fields.');
+        return;
+      }
+    
+      try {
+        const response = await fetch('https://tranquil-aqyr.onrender.com/api/contact-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, message })
+        });
+    
+        const result = await response.json();
+        if (result.success) {
+          alert('Message sent successfully! Thank you.');
+          document.getElementById('contact-form').reset(); // Clear form
+        } else {
+          alert('Something went wrong. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Server error. Please try again later.');
+      }
+    });
+    </script>
+    
   <script>
     const authModal = document.getElementById('auth-modal');
     const loginForm = document.getElementById('login-form');
@@ -433,7 +465,7 @@
       const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
   
-      fetch('http://localhost:5000/api/login', {
+      fetch('https://tranquil-aqyr.onrender.com/api/login', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ email, password })
@@ -454,7 +486,7 @@
       const email = document.querySelector('#signup-form input[type="email"]').value;
       const password = document.querySelector('#signup-form input[type="password"]').value;
   
-      fetch('http://localhost:5000/api/signup', {
+      fetch('https://tranquil-aqyr.onrender.com/api/signup', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ email, password })
@@ -486,7 +518,7 @@
     function sendResetCode() {
       const email = document.getElementById('reset-email').value;
   
-      fetch('http://localhost:5000/api/send-reset-code', {
+      fetch('https://tranquil-aqyr.onrender.com/api/send-reset-code', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ email })
@@ -505,7 +537,7 @@
       const code = document.getElementById('reset-code').value;
       const password = document.getElementById('new-password').value;
   
-      fetch('http://localhost:5000/api/reset-password', {
+      fetch('https://tranquil-aqyr.onrender.com/api/reset-password', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ email, code, password })

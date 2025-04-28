@@ -456,5 +456,33 @@ app.post('/api/admin-login', async (req, res) => {
   }
 });
 
+// New Contact Message Route
+app.post('/api/contact-message', async (req, res) => {
+  const { name, email, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.json({ success: false });
+  }
+
+  try {
+    await transporter.sendMail({
+      from: 'iyonicorp@gmail.com',
+      to: 'iyonicorp@gmail.com',  // Admin email to receive messages
+      subject: '💌 New Contact Message - Tranquil Essence Spa',
+      html: `
+        <h1>New Contact Form Submission</h1>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message}</p>
+      `
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Contact form email failed:', error);
+    res.json({ success: false });
+  }
+});
 
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
