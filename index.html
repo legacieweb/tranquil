@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tranquil Essence Spa</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Open+Sans&display=swap" rel="stylesheet">
+
+  <!-- AOS Animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+    }
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+    }
+
+    @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+  }
+
+  @keyframes float-slow {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .animate-float {
+    animation: float 5s ease-in-out infinite;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+  </style>
+</head>
+<body class="bg-[#fffdf9] text-gray-700">
+
+<!-- Hero Section with Auth -->
+<header class="relative h-screen bg-cover bg-center text-white text-center flex flex-col items-center justify-center" style="background-image: url('pexels-cottonbro-4004120.jpg');">
+    <div class="absolute top-0 left-0 w-full p-6 flex justify-end space-x-4 z-20">
+      <!-- Auth Buttons -->
+      <div id="auth-buttons" class="space-x-3">
+        <button onclick="openModal('login')" class="bg-white/30 hover:bg-white/50 text-white font-semibold py-1 px-4 rounded transition">Login</button>
+        <button onclick="openModal('signup')" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-1 px-4 rounded transition">Sign Up</button>
+      </div>
+  
+      <!-- Authenticated Buttons -->
+      <div id="user-buttons" class="hidden space-x-3">
+        <a href="./dashboard" class="bg-white text-purple-700 font-semibold py-1 px-4 rounded transition hover:bg-gray-100">Dashboard</a>
+        <button onclick="logout()" class="bg-red-600 text-white font-semibold py-1 px-4 rounded transition hover:bg-red-700">Logout</button>
+      </div>
+    </div>
+  
+    <div class="bg-black/50 p-6 rounded-lg z-10">
+      <h1 class="text-3xl sm:text-5xl md:text-6xl font-bold mb-4">Tranquil Essence Spa</h1>
+      <p class="text-base sm:text-xl">Relax, Renew, Rejuvenate</p>
+    </div>
+  </header>
+  
+<!-- Modal Container (Centered & Styled) -->
+<div id="auth-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+  
+      <!-- Close Button -->
+      <button onclick="closeModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-xl font-bold">&times;</button>
+  
+      <!-- Login Form -->
+      <div id="login-form" class="hidden">
+        <h2 class="text-2xl font-bold mb-4 text-black">Login</h2>
+        <form onsubmit="event.preventDefault(); login();">
+          <input type="email" id="login-email" placeholder="Email" class="w-full border px-4 py-2 mb-3 rounded" required>
+          <input type="password" id="login-password" placeholder="Password" class="w-full border px-4 py-2 mb-2 rounded" required>
+          <div class="text-right mb-4">
+            <button type="button" class="text-sm text-purple-600 hover:underline" onclick="openResetModal()">Forgot password?</button>
+          </div>
+          <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">Login</button>
+        </form>
+      </div>
+  
+      <!-- Reset Password Flow -->
+      <div id="reset-form" class="hidden">
+        <h2 class="text-2xl font-bold mb-4 text-black">Reset Password</h2>
+        <form id="reset-email-form" onsubmit="event.preventDefault(); sendResetCode();">
+          <input type="email" id="reset-email" placeholder="Your Email" class="w-full border px-4 py-2 mb-4 rounded" required>
+          <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">Send Reset Code</button>
+        </form>
+  
+        <form id="verify-code-form" class="hidden mt-6" onsubmit="event.preventDefault(); verifyResetCode();">
+          <input type="text" id="reset-code" placeholder="Enter verification code" class="w-full border px-4 py-2 mb-4 rounded" required>
+          <input type="password" id="new-password" placeholder="New password" class="w-full border px-4 py-2 mb-4 rounded" required>
+          <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Reset Password</button>
+        </form>
+      </div>
+  
+      <!-- Signup Form -->
+      <div id="signup-form" class="hidden">
+        <h2 class="text-2xl font-bold mb-4 text-black">Sign Up</h2>
+        <form onsubmit="event.preventDefault(); signup();">
+          <input type="text" placeholder="Full Name" class="w-full border px-4 py-2 mb-3 rounded" required>
+          <input type="email" placeholder="Email" class="w-full border px-4 py-2 mb-3 rounded" required>
+          <input type="password" placeholder="Password" class="w-full border px-4 py-2 mb-4 rounded" required>
+          <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">Create Account</button>
+        </form>
+      </div>
+  
+    </div>
+  </div>
+  
+  
+  
+
+  <!-- Navbar -->
+  <nav class="bg-[#e8ccc3] py-4 text-center">
+    <a href="#services" class="text-gray-800 font-bold mx-4 hover:underline">Services</a>
+    <a href="#about" class="text-gray-800 font-bold mx-4 hover:underline">About</a>
+    <a href="#contact" class="text-gray-800 font-bold mx-4 hover:underline">Contact</a>
+  </nav>
+
+  <!-- Services Section -->
+  <section id="services" class="py-16 px-4 sm:px-6 bg-white">
+    <h2 class="text-4xl font-bold text-center mb-10" data-aos="zoom-in" data-aos-once="false">
+      Our Signature Spa Experiences
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+      <!-- Repeatable Card Template -->
+      <a href="./massage" class="block bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transform transition hover:scale-105"
+         data-aos="flip-left" data-aos-duration="1000" data-aos-once="false">
+        <img src="https://livewellhealthandphysiotherapy.com/wp-content/uploads/2023/04/2.png" alt="Massage" class="w-full h-60 object-cover">
+        <div class="p-6 text-center">
+          <h3 class="text-2xl font-semibold mb-2">Massage Therapy</h3>
+          <p class="text-gray-600">Swedish, Deep Tissue, and Aromatherapy massages to soothe muscles and calm the mind.</p>
+        </div>
+      </a>
+
+      <a href="./facials" class="block bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transform transition hover:scale-105"
+         data-aos="flip-right" data-aos-duration="1000" data-aos-once="false">
+        <img src="pexels-john-tekeridis-21837-3212179.jpg" alt="Facials" class="w-full h-60 object-cover">
+        <div class="p-6 text-center">
+          <h3 class="text-2xl font-semibold mb-2">Facials</h3>
+          <p class="text-gray-600">Customized facials for hydration, anti-aging, and radiant skin.</p>
+        </div>
+      </a>
+
+      <a href="./sauna" class="block bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transform transition hover:scale-105"
+         data-aos="zoom-in-up" data-aos-duration="1000" data-aos-once="false">
+        <img src="https://cdn.prod.website-files.com/63d1b6d4fea0c592779d5e6d/63d687b2050b76047bb66ea9_steam_room_1200x600_crop_center.webp" alt="Sauna" class="w-full h-60 object-cover">
+        <div class="p-6 text-center">
+          <h3 class="text-2xl font-semibold mb-2">Steam & Sauna</h3>
+          <p class="text-gray-600">Detox and recharge in our therapeutic steam and sauna rooms.</p>
+        </div>
+      </a>
+
+      <a href="./bodyscrubs" class="block bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transform transition hover:scale-105"
+         data-aos="fade-up-right" data-aos-duration="1000" data-aos-once="false">
+        <img src="https://www.protonespa.in/wp-content/uploads/2019/12/Body-Scrubs.png" alt="Body Scrubs" class="w-full h-60 object-cover">
+        <div class="p-6 text-center">
+          <h3 class="text-2xl font-semibold mb-2">Body Scrubs</h3>
+          <p class="text-gray-600">Invigorating exfoliation to refresh your skin and improve circulation.</p>
+        </div>
+      </a>
+
+      <a href="./nails" class="block bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transform transition hover:scale-105"
+         data-aos="fade-up-left" data-aos-duration="1000" data-aos-once="false">
+        <img src="pexels-michelle-leman-6774877.jpg" alt="Nails" class="w-full h-60 object-cover">
+        <div class="p-6 text-center">
+          <h3 class="text-2xl font-semibold mb-2">Nail & Beauty</h3>
+          <p class="text-gray-600">Luxurious mani-pedis, waxing, and beauty treatments in a serene setting.</p>
+        </div>
+      </a>
+
+      <a href="./yoga" class="block bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transform transition hover:scale-105"
+         data-aos="fade-up" data-aos-duration="1000" data-aos-once="false">
+        <img src="pexels-yankrukov-8436719.jpg" alt="Yoga" class="w-full h-60 object-cover">
+        <div class="p-6 text-center">
+          <h3 class="text-2xl font-semibold mb-2">Yoga Sessions</h3>
+          <p class="text-gray-600">Experience tranquility and balance with our guided yoga classes.</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+<!-- About Section -->
+<section id="about" class="py-20 px-4 sm:px-6 bg-gradient-to-br from-purple-50 to-pink-50 overflow-x-hidden">
+    <div class="max-w-6xl mx-auto flex flex-col-reverse lg:flex-row items-center lg:gap-16 gap-6">
+  
+      <!-- Text Block -->
+      <div class="w-full lg:w-1/2 text-center lg:text-left" data-aos="fade-right" data-aos-once="false">
+        <h2 class="text-4xl font-bold mb-6">About Tranquil Essence Spa</h2>
+        <p class="text-lg mb-4 text-gray-700">
+          At Tranquil Essence Spa, we believe that wellness is more than a luxury — it’s a way of life.
+          Our mission is to restore harmony between body and mind through personalized spa experiences.
+        </p>
+        <p class="text-lg mb-4 text-gray-700">
+          From massages to facials, and rituals to aromatherapy, we help you relax deeply. Our certified therapists and serene setting make every visit unforgettable.
+        </p>
+        <p class="text-lg text-gray-700">
+          Whether it's a mini escape or a full-day retreat, we welcome you to discover your sanctuary.
+        </p>
+      </div>
+  
+      <!-- Floating Image Gallery -->
+      <div class="w-full lg:w-1/2 flex justify-center">
+        <div class="relative w-full max-w-[400px] h-[480px] sm:h-[500px]">
+  
+          <img src="pexels-heyho-7598359.jpg"
+               alt="Spa room"
+               class="absolute w-40 sm:w-52 md:w-60 rounded-xl shadow-xl animate-float z-30 top-0 left-4 sm:left-0" />
+  
+          <img src="pexels-polina-tankilevitch-3738355.jpg"
+               alt="Facial treatment"
+               class="absolute w-40 sm:w-52 md:w-60 rounded-xl shadow-xl animate-float-slow z-20 top-28 left-24 sm:left-36" />
+  
+          <img src="alan-caishan-cU53ZFBr3lk-unsplash.jpg"
+               alt="Massage therapy"
+               class="absolute w-40 sm:w-52 md:w-60 rounded-xl shadow-xl animate-float z-10 top-52 left-6 sm:left-16" />
+  
+        </div>
+      </div>
+  
+    </div>
+  </section>
+  
+<!-- Why Choose Us Section -->
+<section class="relative py-20 px-4 sm:px-6 bg-cover bg-center text-white" style="background-image: url('pexels-jaliljj-1006540.jpg');">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+  
+    <div class="relative z-10 max-w-6xl mx-auto text-center">
+      <h2 class="text-4xl font-bold mb-10" data-aos="fade-up">Why Choose Tranquil Essence?</h2>
+  
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+  
+        <!-- Feature -->
+        <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20 hover:shadow-xl transition hover:scale-105 hover:bg-white/20"
+             data-aos="fade-up" data-aos-delay="100">
+          <div class="text-5xl mb-4">💆</div>
+          <h3 class="text-xl font-semibold mb-2">Personalized Treatments</h3>
+          <p class="text-sm text-white">Tailored therapies that fit your unique body, energy, and relaxation needs.</p>
+        </div>
+  
+        <!-- Feature -->
+        <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20 hover:shadow-xl transition hover:scale-105 hover:bg-white/20"
+             data-aos="fade-up" data-aos-delay="200">
+          <div class="text-5xl mb-4">🌿</div>
+          <h3 class="text-xl font-semibold mb-2">Natural Ingredients</h3>
+          <p class="text-sm text-white">We use organic oils, herbs, and skin care that are safe, gentle, and effective.</p>
+        </div>
+  
+        <!-- Feature -->
+        <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20 hover:shadow-xl transition hover:scale-105 hover:bg-white/20"
+             data-aos="fade-up" data-aos-delay="300">
+          <div class="text-5xl mb-4">🏝️</div>
+          <h3 class="text-xl font-semibold mb-2">Peaceful Atmosphere</h3>
+          <p class="text-sm text-white">Immerse yourself in a serene sanctuary with calming music and holistic vibes.</p>
+        </div>
+  
+      </div>
+    </div>
+  </section>
+  <!-- Working Hours Section - Cool Version -->
+<section class="py-24 bg-gradient-to-b from-purple-100 via-pink-50 to-white px-4 sm:px-6">
+  <div class="max-w-5xl mx-auto text-center mb-16">
+    <h2 class="text-5xl font-bold text-purple-800 mb-4 drop-shadow-lg">🕰️ Spa Working Hours</h2>
+    <p class="text-gray-600 text-lg">We are open throughout the week to help you relax, heal, and rejuvenate.</p>
+  </div>
+
+  <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-center">
+    <div class="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl p-8 transform hover:scale-105 transition-all duration-300">
+      <div class="text-5xl mb-4 text-purple-600">📅</div>
+      <h3 class="text-2xl font-bold text-purple-700 mb-2">Monday - Friday</h3>
+      <p class="text-gray-600 text-lg">9:00 AM – 8:00 PM</p>
+    </div>
+
+    <div class="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl p-8 transform hover:scale-105 transition-all duration-300">
+      <div class="text-5xl mb-4 text-pink-500">🌸</div>
+      <h3 class="text-2xl font-bold text-purple-700 mb-2">Saturday</h3>
+      <p class="text-gray-600 text-lg">10:00 AM – 6:00 PM</p>
+    </div>
+
+    <div class="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl p-8 transform hover:scale-105 transition-all duration-300">
+      <div class="text-5xl mb-4 text-gray-400">🌙</div>
+      <h3 class="text-2xl font-bold text-purple-700 mb-2">Sunday</h3>
+      <p class="text-gray-600 text-lg">Closed - Rest & Rejuvenate</p>
+    </div>
+  </div>
+</section>
+<!-- Contact Section -->
+<section id="contact" class="py-20 px-4 sm:px-6 bg-gradient-to-br from-pink-50 to-purple-100 overflow-x-hidden">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-12" data-aos="fade-up">Get in Touch</h2>
+  
+      <!-- Info & Form Layout -->
+      <div class="flex flex-col lg:flex-row items-start justify-between gap-8">
+  
+        <!-- Contact Info -->
+        <div class="w-full lg:w-1/2 space-y-6 text-center lg:text-left px-2" data-aos="fade-right">
+          <div class="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-xl transition">
+            <h3 class="text-xl font-semibold mb-2">📧 Email</h3>
+            <p class="text-gray-700 break-words">contact@tranquilessence.com</p>
+          </div>
+          <div class="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-xl transition">
+            <h3 class="text-xl font-semibold mb-2">📞 Phone</h3>
+            <p class="text-gray-700">(123) 456-7890</p>
+          </div>
+          <div class="bg-white/80 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-xl transition">
+            <h3 class="text-xl font-semibold mb-2">📍 Visit</h3>
+            <p class="text-gray-700">456 Zen Avenue, Blissville</p>
+          </div>
+        </div>
+  
+        <!-- Contact Form -->
+        <div class="w-full lg:w-1/2 bg-white rounded-xl shadow-lg p-6 sm:p-8" data-aos="fade-left">
+          <form>
+            <div class="mb-4">
+              <label for="name" class="block text-gray-700 font-semibold mb-2">Your Name</label>
+              <input type="text" id="name" placeholder="Enter your name"
+                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300" />
+            </div>
+  
+            <div class="mb-4">
+              <label for="email" class="block text-gray-700 font-semibold mb-2">Email Address</label>
+              <input type="email" id="email" placeholder="you@example.com"
+                     class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300" />
+            </div>
+  
+            <div class="mb-4">
+              <label for="message" class="block text-gray-700 font-semibold mb-2">Message</label>
+              <textarea id="message" rows="4" placeholder="How can we help you?"
+                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300"></textarea>
+            </div>
+  
+            <button type="submit"
+                    class="w-full bg-purple-600 text-white font-semibold py-2 rounded-lg hover:bg-purple-700 transition">
+              Send Message
+            </button>
+          </form>
+        </div>
+  
+      </div>
+    </div>
+  </section>
+  
+
+<!-- Footer -->
+<footer class="bg-gradient-to-r from-purple-100 to-pink-200 text-gray-800 py-10">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 text-center md:text-left">
+  
+      <!-- Left: Brand Info -->
+      <div>
+        <h4 class="text-2xl font-bold mb-1">Tranquil Essence Spa</h4>
+        <p class="text-sm text-gray-600">© 2025. Designed with serenity in mind.</p>
+        <p class="text-sm mt-1 text-gray-600">
+          Designed by
+          <a href="https://iyonicorp.com" target="_blank" class="text-purple-700 font-medium hover:underline">Iyonicorp</a>
+        </p>
+      </div>
+  
+      <!-- Center: Social Icons -->
+      <div class="flex space-x-5">
+        <a href="#" aria-label="Facebook" class="hover:text-purple-700 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+            <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 5 3.66 9.12 8.44 9.88v-6.99H7.9v-2.89h2.54V9.41c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.89h-2.34v6.99C18.34 21.12 22 17 22 12z"/>
+          </svg>
+        </a>
+        <a href="#" aria-label="Instagram" class="hover:text-pink-600 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2.2c3.2 0 3.584.012 4.849.07 1.17.055 1.96.24 2.414.41.54.197.926.43 1.33.834.404.404.637.79.834 1.33.17.454.355 1.243.41 2.414.058 1.265.07 1.65.07 4.849s-.012 3.584-.07 4.849c-.055 1.17-.24 1.96-.41 2.414a3.65 3.65 0 0 1-.834 1.33 3.65 3.65 0 0 1-1.33.834c-.454.17-1.243.355-2.414.41-1.265.058-1.65.07-4.849.07s-3.584-.012-4.849-.07c-1.17-.055-1.96-.24-2.414-.41a3.65 3.65 0 0 1-1.33-.834 3.65 3.65 0 0 1-.834-1.33c-.17-.454-.355-1.243-.41-2.414C2.212 15.784 2.2 15.4 2.2 12s.012-3.584.07-4.849c.055-1.17.24-1.96.41-2.414.197-.54.43-.926.834-1.33.404-.404.79-.637 1.33-.834.454-.17 1.243-.355 2.414-.41C8.416 2.212 8.8 2.2 12 2.2m0-2.2C8.735 0 8.332.013 7.052.07 5.758.128 4.747.321 3.931.61a5.858 5.858 0 0 0-2.122 1.39A5.86 5.86 0 0 0 .61 4.122C.321 4.938.128 5.948.07 7.242.013 8.522 0 8.925 0 12s.013 3.478.07 4.758c.058 1.294.251 2.305.54 3.121a5.86 5.86 0 0 0 1.39 2.122 5.858 5.858 0 0 0 2.122 1.39c.816.289 1.827.482 3.121.54C8.522 23.987 8.925 24 12 24s3.478-.013 4.758-.07c1.294-.058 2.305-.251 3.121-.54a5.858 5.858 0 0 0 2.122-1.39 5.86 5.86 0 0 0 1.39-2.122c.289-.816.482-1.827.54-3.121.058-1.28.07-1.683.07-4.758s-.013-3.478-.07-4.758c-.058-1.294-.251-2.305-.54-3.121a5.86 5.86 0 0 0-1.39-2.122A5.858 5.858 0 0 0 19.879.61c-.816-.289-1.827-.482-3.121-.54C15.478.013 15.075 0 12 0z"/>
+            <path d="M12 5.838A6.162 6.162 0 1 0 18.162 12 6.162 6.162 0 0 0 12 5.838zm0 10.162A3.999 3.999 0 1 1 16 12a3.999 3.999 0 0 1-4 4zm6.406-11.845a1.44 1.44 0 1 0 1.44 1.44 1.44 1.44 0 0 0-1.44-1.44z"/>
+          </svg>
+        </a>
+        <a href="#" aria-label="Twitter" class="hover:text-blue-500 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+            <path d="M22.46 6c-.77.35-1.6.58-2.47.69a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04 4.27 4.27 0 0 0-7.26 3.89A12.12 12.12 0 0 1 3.16 4.9a4.25 4.25 0 0 0 1.32 5.69 4.27 4.27 0 0 1-1.93-.54v.06a4.27 4.27 0 0 0 3.43 4.18 4.29 4.29 0 0 1-1.92.07 4.27 4.27 0 0 0 3.99 2.97 8.57 8.57 0 0 1-5.3 1.83A8.7 8.7 0 0 1 2 19.54 12.09 12.09 0 0 0 8.29 21.5c7.55 0 11.68-6.26 11.68-11.68 0-.18-.01-.36-.02-.54a8.28 8.28 0 0 0 2.01-2.1z"/>
+          </svg>
+        </a>
+      </div>
+  
+      <!-- Right: Scroll to Top -->
+      <button onclick="scrollToTop()" class="text-sm font-medium text-purple-700 hover:underline transition">
+        ↑ Back to Top
+      </button>
+      
+    </div>
+  </footer>
+  
+  <script>
+    const authModal = document.getElementById('auth-modal');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const authButtons = document.getElementById('auth-buttons');
+    const userButtons = document.getElementById('user-buttons');
+  
+    // Initialize auth state on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const isLoggedIn = localStorage.getItem('spaUser');
+      if (isLoggedIn === 'true') {
+        authButtons.classList.add('hidden');
+        userButtons.classList.remove('hidden');
+      } else {
+        authButtons.classList.remove('hidden');
+        userButtons.classList.add('hidden');
+      }
+    });
+  
+    function openModal(type) {
+      authModal.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+      signupForm.classList.add('hidden');
+      document.getElementById('reset-form')?.classList?.add('hidden');
+  
+      if (type === 'login') {
+        loginForm.classList.remove('hidden');
+      } else {
+        signupForm.classList.remove('hidden');
+      }
+    }
+  
+    function closeModal() {
+      authModal.classList.add('hidden');
+    }
+  
+    function login() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+  
+      fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, password })
+      }).then(res => res.json()).then(data => {
+        if (data.success) {
+          localStorage.setItem('spaUser', 'true');
+          closeModal();
+          authButtons.classList.add('hidden');
+          userButtons.classList.remove('hidden');
+          alert("Logged in successfully!");
+        } else {
+          alert("Invalid email or password");
+        }
+      });
+    }
+  
+    function signup() {
+      const email = document.querySelector('#signup-form input[type="email"]').value;
+      const password = document.querySelector('#signup-form input[type="password"]').value;
+  
+      fetch('http://localhost:5000/api/signup', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, password })
+      }).then(res => res.json()).then(data => {
+        if (data.success) {
+          localStorage.setItem('spaUser', 'true');
+          closeModal();
+          authButtons.classList.add('hidden');
+          userButtons.classList.remove('hidden');
+          alert("Account created successfully!");
+        } else {
+          alert("Email already exists.");
+        }
+      });
+    }
+  
+    function logout() {
+      localStorage.removeItem('spaUser');
+      authButtons.classList.remove('hidden');
+      userButtons.classList.add('hidden');
+      alert("You have logged out.");
+    }
+  
+    function openResetModal() {
+      loginForm.classList.add('hidden');
+      document.getElementById('reset-form').classList.remove('hidden');
+    }
+  
+    function sendResetCode() {
+      const email = document.getElementById('reset-email').value;
+  
+      fetch('http://localhost:5000/api/send-reset-code', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email })
+      }).then(res => res.json()).then(data => {
+        if (data.success) {
+          alert('Reset code sent to email!');
+          document.getElementById('verify-code-form').classList.remove('hidden');
+        } else {
+          alert('Email not found');
+        }
+      });
+    }
+  
+    function verifyResetCode() {
+      const email = document.getElementById('reset-email').value;
+      const code = document.getElementById('reset-code').value;
+      const password = document.getElementById('new-password').value;
+  
+      fetch('http://localhost:5000/api/reset-password', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, code, password })
+      }).then(res => res.json()).then(data => {
+        if (data.success) {
+          alert('Password reset successful!');
+          closeModal();
+        } else {
+          alert('Invalid code or request expired');
+        }
+      });
+    }
+  </script>
+  
+
+  <!-- AOS Script -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      once: false,
+      mirror: true,
+      duration: 1000
+    });
+    
+  </script>
+  <script>
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+  
+</body>
+</html>

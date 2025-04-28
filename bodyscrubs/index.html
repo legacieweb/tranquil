@@ -1,0 +1,460 @@
+ <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Body scrubs- Tranquil Essence Spa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Open+Sans&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Open Sans', sans-serif;
+      }
+      h1, h2, h3 {
+        font-family: 'Playfair Display', serif;
+      }
+    </style>
+  </head>
+  
+  <body class="bg-[#fffdf9] text-gray-700">
+  
+    <!-- Header -->
+    <header class="relative h-screen bg-cover bg-center text-white text-center flex flex-col items-center justify-center"
+            style="background-image: url('https://www.solo-spa-eg.com/wp-content/uploads/2024/03/Body-Scrubs-300x176.png');">
+      <div class="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-20">
+        <div>
+          <a href="https://tranquil.iyonicorp.com" class="bg-white/30 hover:bg-white/50 text-black font-semibold py-1 px-4 rounded transition">Home</a>
+        </div>
+        <div id="auth-buttons" class="space-x-3">
+          <button onclick="openModal('login')" class="bg-white/30 hover:bg-white/50 text-white font-semibold py-1 px-4 rounded transition">Login</button>
+          <button onclick="openModal('signup')" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-1 px-4 rounded transition">Sign Up</button>
+        </div>
+        <div id="user-buttons" class="hidden space-x-3">
+          <a href="../dashboard" class="bg-white text-purple-700 font-semibold py-1 px-4 rounded transition hover:bg-gray-100">Dashboard</a>
+          <button onclick="logout()" class="bg-red-600 text-white font-semibold py-1 px-4 rounded transition hover:bg-red-700">Logout</button>
+        </div>
+      </div>
+      <div class="bg-black/50 p-6 rounded-lg z-10">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">Body Scrubs</h1>
+          <p class="text-lg sm:text-xl">Exfoliate, hydrate, and rejuvenate your skin with our luxurious body scrub treatments.</p>
+      </div>
+    </header>
+  
+<!-- Signature Body Scrub Services Section -->
+  
+    <div class="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+  
+      <!-- Card 1: Tropical Sugar Glow -->
+      <div class="bg-white rounded-xl shadow-lg hover:shadow-xl p-6 transition duration-300">
+        <img src="https://www.polynesianspa.co.nz/wp-content/uploads/fly-images/1792/Body-Polish-in-The-Retreat-Day-Spa-at-Polynesian-Spa-New-Zealands-Best-Day-Spa-550x550-c.jpg" alt="Tropical Sugar Glow"
+             class="w-full h-48 object-cover rounded-lg mb-4 shadow-md">
+        <h3 class="text-2xl font-semibold text-purple-700 mb-2">Tropical Sugar Glow</h3>
+        <p class="text-gray-600 mb-3 text-sm">
+          A delicious sugar scrub blended with coconut and mango extracts to exfoliate, hydrate, and leave you glowing.
+        </p>
+        <div class="text-purple-600 font-semibold text-lg mb-4">$75 - 50 minutes</div>
+        <button onclick="scheduleMassage('Tropical Sugar Glow')" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">Schedule Treatment</button>
+      </div>
+  
+      <!-- Card 2: Himalayan Salt Detox -->
+      <div class="bg-white rounded-xl shadow-lg hover:shadow-xl p-6 transition duration-300">
+        <img src="https://eminenceorganics.com/sites/default/files/article-image/eminence-organics-himalayan-salt-stone-massage.jpg" alt="Himalayan Salt Detox"
+             class="w-full h-48 object-cover rounded-lg mb-4 shadow-md">
+        <h3 class="text-2xl font-semibold text-purple-700 mb-2">Himalayan Salt Detox</h3>
+        <p class="text-gray-600 mb-3 text-sm">
+          Rejuvenate your skin and stimulate circulation with a mineral-rich Himalayan salt scrub, followed by nourishing oils.
+        </p>
+        <div class="text-purple-600 font-semibold text-lg mb-4">$85 - 60 minutes</div>
+        <button onclick="scheduleMassage('Himalayan Salt Detox')" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">Schedule Treatment</button>
+      </div>
+  
+      <!-- Card 3: Coffee & Coconut Polish -->
+      <div class="bg-white rounded-xl shadow-lg hover:shadow-xl p-6 transition duration-300">
+        <img src="https://i0.wp.com/athmanwellness.com/wp-content/uploads/2021/09/body-scrub-mu-therapy.jpg?resize=1024%2C683&ssl=1" alt="Coffee & Coconut Polish"
+             class="w-full h-48 object-cover rounded-lg mb-4 shadow-md">
+        <h3 class="text-2xl font-semibold text-purple-700 mb-2">Coffee & Coconut Polish</h3>
+        <p class="text-gray-600 mb-3 text-sm">
+          Invigorating coffee grounds and coconut oil combine to exfoliate, tighten, and deeply nourish your skin.
+        </p>
+        <div class="text-purple-600 font-semibold text-lg mb-4">$80 - 55 minutes</div>
+        <button onclick="scheduleMassage('Coffee & Coconut Polish')" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">Schedule Treatment</button>
+      </div>
+  
+    </div>
+  </section>
+  
+
+<!-- Schedule Modal for Body Scrubs -->
+<div id="schedule-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+  <div class="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
+    <button onclick="closeSchedule()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-xl font-bold">&times;</button>
+    <h2 class="text-xl font-bold mb-4 text-black">Book Your Body Scrub</h2>
+    <p class="mb-2 text-sm text-gray-600">Treatment: <span id="selected-service" class="font-semibold text-purple-600"></span></p>
+    
+    <input type="datetime-local" id="appointment-date" class="w-full mb-4 px-4 py-2 border rounded" required>
+    <input type="tel" id="phone-number" placeholder="Phone Number" class="w-full mb-4 px-4 py-2 border rounded" required>
+    
+    <button onclick="confirmBooking()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Confirm Booking</button>
+  </div>
+</div>
+
+
+<!-- Body Scrubs Booking Steps Section -->
+<section class="py-20 bg-purple-50 text-center">
+  <div class="max-w-5xl mx-auto px-6">
+    <h2 class="text-4xl font-bold text-purple-700 mb-10">How to Book Your Body Scrub</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <div class="p-6 bg-white rounded-lg shadow hover:shadow-lg transition">
+        <div class="text-6xl text-purple-600 mb-4">🛁</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Pick Your Scrub</h3>
+        <p class="text-gray-600">Select from tropical sugar, Himalayan salt detox, or coffee & coconut polish treatments.</p>
+      </div>
+
+      <div class="p-6 bg-white rounded-lg shadow hover:shadow-lg transition">
+        <div class="text-6xl text-purple-600 mb-4">📅</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Book Your Session</h3>
+        <p class="text-gray-600">Easily schedule your preferred day and time online for pure relaxation.</p>
+      </div>
+
+      <div class="p-6 bg-white rounded-lg shadow hover:shadow-lg transition">
+        <div class="text-6xl text-purple-600 mb-4">✨</div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Radiate Freshness</h3>
+        <p class="text-gray-600">Leave our spa with silky-smooth, glowing, and revitalized skin.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Body Scrubs Testimonials Section -->
+<section class="py-20 bg-gradient-to-br from-purple-50 via-white to-pink-50 text-center">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-4xl font-bold text-purple-700 mb-12">💬 What Our Clients Say</h2>
+
+    <div class="grid md:grid-cols-3 gap-10">
+
+      <div class="p-8 bg-white rounded-3xl shadow-xl hover:shadow-2xl transition duration-300 relative overflow-hidden">
+        <div class="text-6xl text-purple-400 absolute top-4 left-6 opacity-20">“</div>
+        <p class="text-gray-700 italic mb-6 relative z-10">
+          "The tropical sugar scrub was a dream — my skin feels so smooth and smells amazing!"
+        </p>
+        <h4 class="font-bold text-purple-700 relative z-10">- Emily S.</h4>
+      </div>
+
+      <div class="p-8 bg-white rounded-3xl shadow-xl hover:shadow-2xl transition duration-300 relative overflow-hidden">
+        <div class="text-6xl text-purple-400 absolute top-4 left-6 opacity-20">“</div>
+        <p class="text-gray-700 italic mb-6 relative z-10">
+          "Loved the Himalayan salt detox scrub. I felt instantly refreshed and lighter!"
+        </p>
+        <h4 class="font-bold text-purple-700 relative z-10">- Daniel V.</h4>
+      </div>
+
+      <div class="p-8 bg-white rounded-3xl shadow-xl hover:shadow-2xl transition duration-300 relative overflow-hidden">
+        <div class="text-6xl text-purple-400 absolute top-4 left-6 opacity-20">“</div>
+        <p class="text-gray-700 italic mb-6 relative z-10">
+          "That coffee & coconut polish woke up my senses — my skin is glowing!"
+        </p>
+        <h4 class="font-bold text-purple-700 relative z-10">- Sarah B.</h4>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- Footer -->
+<footer class="bg-gradient-to-r from-purple-100 to-pink-200 text-gray-800 py-10">
+  <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 text-center md:text-left">
+
+    <!-- Left: Brand Info -->
+    <div>
+      <h4 class="text-2xl font-bold mb-1">Tranquil Essence Spa</h4>
+      <p class="text-sm text-gray-600">© 2025. Designed with serenity in mind.</p>
+      <p class="text-sm mt-1 text-gray-600">
+        Designed by
+        <a href="https://iyonicorp.com" target="_blank" class="text-purple-700 font-medium hover:underline">Iyonicorp</a>
+      </p>
+    </div>
+
+    <!-- Center: Social Icons -->
+    <div class="flex space-x-5">
+      <a href="#" aria-label="Facebook" class="hover:text-purple-700 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+          <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 5 3.66 9.12 8.44 9.88v-6.99H7.9v-2.89h2.54V9.41c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.89h-2.34v6.99C18.34 21.12 22 17 22 12z"/>
+        </svg>
+      </a>
+      <a href="#" aria-label="Instagram" class="hover:text-pink-600 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+          <path d="M12 2.2c3.2 0 3.584.012 4.849.07 1.17.055 1.96.24 2.414.41.54.197.926.43 1.33.834.404.404.637.79.834 1.33.17.454.355 1.243.41 2.414.058 1.265.07 1.65.07 4.849s-.012 3.584-.07 4.849c-.055 1.17-.24 1.96-.41 2.414a3.65 3.65 0 0 1-.834 1.33 3.65 3.65 0 0 1-1.33.834c-.454.17-1.243.355-2.414.41-1.265.058-1.65.07-4.849.07s-3.584-.012-4.849-.07c-1.17-.055-1.96-.24-2.414-.41a3.65 3.65 0 0 1-1.33-.834 3.65 3.65 0 0 1-.834-1.33c-.17-.454-.355-1.243-.41-2.414C2.212 15.784 2.2 15.4 2.2 12s.012-3.584.07-4.849c.055-1.17.24-1.96.41-2.414.197-.54.43-.926.834-1.33.404-.404.79-.637 1.33-.834.454-.17 1.243-.355 2.414-.41C8.416 2.212 8.8 2.2 12 2.2m0-2.2C8.735 0 8.332.013 7.052.07 5.758.128 4.747.321 3.931.61a5.858 5.858 0 0 0-2.122 1.39A5.86 5.86 0 0 0 .61 4.122C.321 4.938.128 5.948.07 7.242.013 8.522 0 8.925 0 12s.013 3.478.07 4.758c.058 1.294.251 2.305.54 3.121a5.86 5.86 0 0 0 1.39 2.122 5.858 5.858 0 0 0 2.122 1.39c.816.289 1.827.482 3.121.54C8.522 23.987 8.925 24 12 24s3.478-.013 4.758-.07c1.294-.058 2.305-.251 3.121-.54a5.858 5.858 0 0 0 2.122-1.39 5.86 5.86 0 0 0 1.39-2.122c.289-.816.482-1.827.54-3.121.058-1.28.07-1.683.07-4.758s-.013-3.478-.07-4.758c-.058-1.294-.251-2.305-.54-3.121a5.86 5.86 0 0 0-1.39-2.122A5.858 5.858 0 0 0 19.879.61c-.816-.289-1.827-.482-3.121-.54C15.478.013 15.075 0 12 0z"/>
+          <path d="M12 5.838A6.162 6.162 0 1 0 18.162 12 6.162 6.162 0 0 0 12 5.838zm0 10.162A3.999 3.999 0 1 1 16 12a3.999 3.999 0 0 1-4 4zm6.406-11.845a1.44 1.44 0 1 0 1.44 1.44 1.44 1.44 0 0 0-1.44-1.44z"/>
+        </svg>
+      </a>
+      <a href="#" aria-label="Twitter" class="hover:text-blue-500 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+          <path d="M22.46 6c-.77.35-1.6.58-2.47.69a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04 4.27 4.27 0 0 0-7.26 3.89A12.12 12.12 0 0 1 3.16 4.9a4.25 4.25 0 0 0 1.32 5.69 4.27 4.27 0 0 1-1.93-.54v.06a4.27 4.27 0 0 0 3.43 4.18 4.29 4.29 0 0 1-1.92.07 4.27 4.27 0 0 0 3.99 2.97 8.57 8.57 0 0 1-5.3 1.83A8.7 8.7 0 0 1 2 19.54 12.09 12.09 0 0 0 8.29 21.5c7.55 0 11.68-6.26 11.68-11.68 0-.18-.01-.36-.02-.54a8.28 8.28 0 0 0 2.01-2.1z"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Right: Scroll to Top -->
+    <button onclick="scrollToTop()" class="text-sm font-medium text-purple-700 hover:underline transition">
+      ↑ Back to Top
+    </button>
+    
+  </div>
+</footer>
+
+<script>
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+<script>
+function confirmBooking() {
+  const confirmBtn = document.querySelector('#schedule-modal button');
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = "Booking...";
+
+  const service = document.getElementById('selected-service').innerText;
+  const datetime = document.getElementById('appointment-date').value;
+  const phone = document.getElementById('phone-number').value;
+  const email = localStorage.getItem('spaUserEmail');
+  const name = localStorage.getItem('spaUserName');
+
+  if (!datetime || !phone || !email || !name) {
+    alert('Please fill out all fields and login.');
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = "Confirm Booking";
+    return;
+  }
+
+  fetch('http://localhost:5000/api/book-appointment', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ service, datetime, phone, email, name })
+  }).then(res => res.json()).then(data => {
+    if (data.success) {
+      alert('Appointment booked successfully! Confirmation email sent.');
+      window.location.href = '../dashboard';
+    } else {
+      alert('Failed to book appointment.');
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = "Confirm Booking";
+    }
+  }).catch(err => {
+    console.error(err);
+    alert('Server error, please try again later.');
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = "Confirm Booking";
+  });
+}
+
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    
+      function scheduleMassage(service) {
+        const isLoggedIn = localStorage.getItem('spaUser');
+        if (isLoggedIn === 'true') {
+          document.getElementById('selected-service').innerText = service;
+          document.getElementById('schedule-modal').classList.remove('hidden');
+        } else {
+          alert("Please login or sign up to schedule an appointment.");
+          if (typeof openModal === "function") openModal('login');
+        }
+      }
+    
+      window.scheduleMassage = scheduleMassage; // expose globally
+    
+      function closeSchedule() {
+        document.getElementById('schedule-modal').classList.add('hidden');
+      }
+    
+      window.closeSchedule = closeSchedule; // expose globally
+    
+    });
+    </script>
+    
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    
+      function scheduleMassage(service) {
+        const isLoggedIn = localStorage.getItem('spaUser');
+        if (isLoggedIn === 'true') {
+          document.getElementById('selected-service').innerText = service;
+          document.getElementById('schedule-modal').classList.remove('hidden');
+        } else {
+          alert("Please login or sign up to schedule an appointment.");
+          if (typeof openModal === "function") openModal('login');
+        }
+      }
+    
+      window.scheduleMassage = scheduleMassage; // expose globally
+    
+      function closeSchedule() {
+        document.getElementById('schedule-modal').classList.add('hidden');
+      }
+    
+      window.closeSchedule = closeSchedule; // expose globally
+    
+    });
+    </script>
+    
+
+  <script>
+    const authModal = document.getElementById('auth-modal');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const authButtons = document.getElementById('auth-buttons');
+    const userButtons = document.getElementById('user-buttons');
+  
+    // Initialize auth state on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const isLoggedIn = localStorage.getItem('spaUser');
+      if (isLoggedIn === 'true') {
+        authButtons.classList.add('hidden');
+        userButtons.classList.remove('hidden');
+      } else {
+        authButtons.classList.remove('hidden');
+        userButtons.classList.add('hidden');
+      }
+    });
+  
+    function openModal(type) {
+      authModal.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+      signupForm.classList.add('hidden');
+      document.getElementById('reset-form')?.classList?.add('hidden');
+  
+      if (type === 'login') {
+        loginForm.classList.remove('hidden');
+      } else {
+        signupForm.classList.remove('hidden');
+      }
+    }
+  
+    function closeModal() {
+      authModal.classList.add('hidden');
+    }
+  
+    function login() {
+  const loginBtn = document.querySelector('#login-form button[type="submit"]');
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Logging in...";
+
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+
+  fetch('http://localhost:5000/api/login', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ email, password })
+  }).then(res => res.json()).then(data => {
+    if (data.success) {
+      localStorage.setItem('spaUser', 'true');
+      localStorage.setItem('spaUserEmail', email);
+      closeModal();
+      authButtons.classList.add('hidden');
+      userButtons.classList.remove('hidden');
+      alert("Logged in successfully!");
+    } else {
+      alert("Invalid email or password");
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Login";
+    }
+  }).catch(err => {
+    console.error(err);
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Login";
+  });
+}
+
+function signup() {
+  const signupBtn = document.querySelector('#signup-form button[type="submit"]');
+  signupBtn.disabled = true;
+  signupBtn.textContent = "Creating Account...";
+
+  const name = document.querySelector('#signup-form input[type="text"]').value;
+  const email = document.querySelector('#signup-form input[type="email"]').value;
+  const password = document.querySelector('#signup-form input[type="password"]').value;
+
+  fetch('http://localhost:5000/api/signup', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ name, email, password })
+  }).then(res => res.json()).then(data => {
+    if (data.success) {
+      localStorage.setItem('spaUser', 'true');
+      localStorage.setItem('spaUserName', name);
+      localStorage.setItem('spaUserEmail', email);
+      closeModal();
+      authButtons.classList.add('hidden');
+      userButtons.classList.remove('hidden');
+      alert("Account created successfully!");
+    } else {
+      alert("Email already exists.");
+      signupBtn.disabled = false;
+      signupBtn.textContent = "Create Account";
+    }
+  }).catch(err => {
+    console.error(err);
+    signupBtn.disabled = false;
+    signupBtn.textContent = "Create Account";
+  });
+}
+
+    function logout() {
+      localStorage.removeItem('spaUser');
+      authButtons.classList.remove('hidden');
+      userButtons.classList.add('hidden');
+      alert("You have logged out.");
+    }
+  
+    function openResetModal() {
+      loginForm.classList.add('hidden');
+      document.getElementById('reset-form').classList.remove('hidden');
+    }
+  
+    function sendResetCode() {
+      const email = document.getElementById('reset-email').value;
+  
+      fetch('http://localhost:5000/api/send-reset-code', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email })
+      }).then(res => res.json()).then(data => {
+        if (data.success) {
+          alert('Reset code sent to email!');
+          document.getElementById('verify-code-form').classList.remove('hidden');
+        } else {
+          alert('Email not found');
+        }
+      });
+    }
+  
+    function verifyResetCode() {
+      const email = document.getElementById('reset-email').value;
+      const code = document.getElementById('reset-code').value;
+      const password = document.getElementById('new-password').value;
+  
+      fetch('http://localhost:5000/api/reset-password', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ email, code, password })
+      }).then(res => res.json()).then(data => {
+        if (data.success) {
+          alert('Password reset successful!');
+          closeModal();
+        } else {
+          alert('Invalid code or request expired');
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
