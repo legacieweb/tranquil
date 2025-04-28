@@ -39,51 +39,46 @@
           <p class="text-lg sm:text-xl">Exfoliate, hydrate, and rejuvenate your skin with our luxurious body scrub treatments.</p>
       </div>
     </header>
-  <!-- Authentication Modal (Login / Signup) -->
-<div id="auth-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
-  <div class="bg-white w-full max-w-md rounded-xl shadow-lg p-8 relative">
-    <button onclick="closeModal()" class="absolute top-3 right-5 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
 
-    <!-- Login Form -->
-    <form id="login-form" class="space-y-6 hidden">
-      <h2 class="text-2xl font-bold text-center mb-4 text-purple-700">Login</h2>
-
-      <input type="email" id="login-email" placeholder="Email"
-             class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400" required />
-      <input type="password" id="login-password" placeholder="Password"
-             class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400" required />
-
-      <button type="button" onclick="login()"
-              class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700">Login</button>
-
-      <p class="text-center text-sm text-gray-600 mt-4">
-        Don't have an account? 
-        <a href="#" onclick="openModal('signup')" class="text-purple-600 font-semibold hover:underline">Sign Up</a>
-      </p>
-    </form>
-
-    <!-- Signup Form -->
-    <form id="signup-form" class="space-y-6 hidden">
-      <h2 class="text-2xl font-bold text-center mb-4 text-purple-700">Create Account</h2>
-
-      <input type="text" placeholder="Name"
-             class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400" required />
-      <input type="email" placeholder="Email"
-             class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400" required />
-      <input type="password" placeholder="Password"
-             class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-400" required />
-
-      <button type="button" onclick="signup()"
-              class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">Create Account</button>
-
-      <p class="text-center text-sm text-gray-600 mt-4">
-        Already have an account? 
-        <a href="#" onclick="openModal('login')" class="text-purple-600 font-semibold hover:underline">Login</a>
-      </p>
-    </form>
-
+  <!-- Modal Container (Centered & Styled) -->
+  <div id="auth-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+      <button onclick="closeModal()" class="absolute top-2 right-4 text-gray-400 hover:text-red-500 text-xl font-bold">&times;</button>
+      <div id="login-form" class="hidden">
+        <h2 class="text-2xl font-bold mb-4 text-black">Login</h2>
+        <form onsubmit="event.preventDefault(); login();">
+          <input type="email" id="login-email" placeholder="Email" class="w-full border px-4 py-2 mb-3 rounded" required>
+          <input type="password" id="login-password" placeholder="Password" class="w-full border px-4 py-2 mb-2 rounded" required>
+          <div class="text-right mb-4">
+            <button type="button" class="text-sm text-purple-600 hover:underline" onclick="openResetModal()">Forgot password?</button>
+          </div>
+          <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">Login</button>
+        </form>
+      </div>
+      <div id="reset-form" class="hidden">
+        <h2 class="text-2xl font-bold mb-4 text-black">Reset Password</h2>
+        <form id="reset-email-form" onsubmit="event.preventDefault(); sendResetCode();">
+          <input type="email" id="reset-email" placeholder="Your Email" class="w-full border px-4 py-2 mb-4 rounded" required>
+          <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">Send Reset Code</button>
+        </form>
+        <form id="verify-code-form" class="hidden mt-6" onsubmit="event.preventDefault(); verifyResetCode();">
+          <input type="text" id="reset-code" placeholder="Enter verification code" class="w-full border px-4 py-2 mb-4 rounded" required>
+          <input type="password" id="new-password" placeholder="New password" class="w-full border px-4 py-2 mb-4 rounded" required>
+          <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Reset Password</button>
+        </form>
+      </div>
+      <div id="signup-form" class="hidden">
+        <h2 class="text-2xl font-bold mb-4 text-black">Sign Up</h2>
+        <form onsubmit="event.preventDefault(); signup();">
+          <input type="text" placeholder="Full Name" class="w-full border px-4 py-2 mb-3 rounded" required>
+          <input type="email" placeholder="Email" class="w-full border px-4 py-2 mb-3 rounded" required>
+          <input type="password" placeholder="Password" class="w-full border px-4 py-2 mb-4 rounded" required>
+          <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">Create Account</button>
+        </form>
+      </div>
+    </div>
   </div>
-</div>
+
 
 <!-- Signature Body Scrub Services Section -->
   
@@ -350,156 +345,156 @@ function confirmBooking() {
     </script>
     
 
-  <script>
-    const authModal = document.getElementById('auth-modal');
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
-    const authButtons = document.getElementById('auth-buttons');
-    const userButtons = document.getElementById('user-buttons');
+    <script>
+      const authModal = document.getElementById('auth-modal');
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const authButtons = document.getElementById('auth-buttons');
+      const userButtons = document.getElementById('user-buttons');
+    
+      // Initialize auth state on load
+      window.addEventListener('DOMContentLoaded', () => {
+        const isLoggedIn = localStorage.getItem('spaUser');
+        if (isLoggedIn === 'true') {
+          authButtons.classList.add('hidden');
+          userButtons.classList.remove('hidden');
+        } else {
+          authButtons.classList.remove('hidden');
+          userButtons.classList.add('hidden');
+        }
+      });
+    
+      function openModal(type) {
+        authModal.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        signupForm.classList.add('hidden');
+        document.getElementById('reset-form')?.classList?.add('hidden');
+    
+        if (type === 'login') {
+          loginForm.classList.remove('hidden');
+        } else {
+          signupForm.classList.remove('hidden');
+        }
+      }
+    
+      function closeModal() {
+        authModal.classList.add('hidden');
+      }
+    
+      function login() {
+    const loginBtn = document.querySelector('#login-form button[type="submit"]');
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Logging in...";
   
-    // Initialize auth state on load
-    window.addEventListener('DOMContentLoaded', () => {
-      const isLoggedIn = localStorage.getItem('spaUser');
-      if (isLoggedIn === 'true') {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+  
+    fetch('https://tranquil-aqyr.onrender.com/api/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email, password })
+    }).then(res => res.json()).then(data => {
+      if (data.success) {
+        localStorage.setItem('spaUser', 'true');
+        localStorage.setItem('spaUserEmail', email);
+        closeModal();
         authButtons.classList.add('hidden');
         userButtons.classList.remove('hidden');
+        alert("Logged in successfully!");
       } else {
-        authButtons.classList.remove('hidden');
-        userButtons.classList.add('hidden');
+        alert("Invalid email or password");
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Login";
       }
-    });
-  
-    function openModal(type) {
-      authModal.classList.remove('hidden');
-      loginForm.classList.add('hidden');
-      signupForm.classList.add('hidden');
-      document.getElementById('reset-form')?.classList?.add('hidden');
-  
-      if (type === 'login') {
-        loginForm.classList.remove('hidden');
-      } else {
-        signupForm.classList.remove('hidden');
-      }
-    }
-  
-    function closeModal() {
-      authModal.classList.add('hidden');
-    }
-  
-    function login() {
-  const loginBtn = document.querySelector('#login-form button[type="submit"]');
-  loginBtn.disabled = true;
-  loginBtn.textContent = "Logging in...";
-
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-
-  fetch('https://tranquil-aqyr.onrender.com/api/login', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ email, password })
-  }).then(res => res.json()).then(data => {
-    if (data.success) {
-      localStorage.setItem('spaUser', 'true');
-      localStorage.setItem('spaUserEmail', email);
-      closeModal();
-      authButtons.classList.add('hidden');
-      userButtons.classList.remove('hidden');
-      alert("Logged in successfully!");
-    } else {
-      alert("Invalid email or password");
+    }).catch(err => {
+      console.error(err);
       loginBtn.disabled = false;
       loginBtn.textContent = "Login";
-    }
-  }).catch(err => {
-    console.error(err);
-    loginBtn.disabled = false;
-    loginBtn.textContent = "Login";
-  });
-}
-
-function signup() {
-  const signupBtn = document.querySelector('#signup-form button[type="submit"]');
-  signupBtn.disabled = true;
-  signupBtn.textContent = "Creating Account...";
-
-  const name = document.querySelector('#signup-form input[type="text"]').value;
-  const email = document.querySelector('#signup-form input[type="email"]').value;
-  const password = document.querySelector('#signup-form input[type="password"]').value;
-
-  fetch('https://tranquil-aqyr.onrender.com/api/signup', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ name, email, password })
-  }).then(res => res.json()).then(data => {
-    if (data.success) {
-      localStorage.setItem('spaUser', 'true');
-      localStorage.setItem('spaUserName', name);
-      localStorage.setItem('spaUserEmail', email);
-      closeModal();
-      authButtons.classList.add('hidden');
-      userButtons.classList.remove('hidden');
-      alert("Account created successfully!");
-    } else {
-      alert("Email already exists.");
+    });
+  }
+  
+  function signup() {
+    const signupBtn = document.querySelector('#signup-form button[type="submit"]');
+    signupBtn.disabled = true;
+    signupBtn.textContent = "Creating Account...";
+  
+    const name = document.querySelector('#signup-form input[type="text"]').value;
+    const email = document.querySelector('#signup-form input[type="email"]').value;
+    const password = document.querySelector('#signup-form input[type="password"]').value;
+  
+    fetch('https://tranquil-aqyr.onrender.com/api/signup', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ name, email, password })
+    }).then(res => res.json()).then(data => {
+      if (data.success) {
+        localStorage.setItem('spaUser', 'true');
+        localStorage.setItem('spaUserName', name);
+        localStorage.setItem('spaUserEmail', email);
+        closeModal();
+        authButtons.classList.add('hidden');
+        userButtons.classList.remove('hidden');
+        alert("Account created successfully!");
+      } else {
+        alert("Email already exists.");
+        signupBtn.disabled = false;
+        signupBtn.textContent = "Create Account";
+      }
+    }).catch(err => {
+      console.error(err);
       signupBtn.disabled = false;
       signupBtn.textContent = "Create Account";
-    }
-  }).catch(err => {
-    console.error(err);
-    signupBtn.disabled = false;
-    signupBtn.textContent = "Create Account";
-  });
-}
-
-    function logout() {
-      localStorage.removeItem('spaUser');
-      authButtons.classList.remove('hidden');
-      userButtons.classList.add('hidden');
-      alert("You have logged out.");
-    }
+    });
+  }
   
-    function openResetModal() {
-      loginForm.classList.add('hidden');
-      document.getElementById('reset-form').classList.remove('hidden');
-    }
-  
-    function sendResetCode() {
-      const email = document.getElementById('reset-email').value;
-  
-      fetch('https://tranquil-aqyr.onrender.com/api/send-reset-code', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ email })
-      }).then(res => res.json()).then(data => {
-        if (data.success) {
-          alert('Reset code sent to email!');
-          document.getElementById('verify-code-form').classList.remove('hidden');
-        } else {
-          alert('Email not found');
-        }
-      });
-    }
-  
-    function verifyResetCode() {
-      const email = document.getElementById('reset-email').value;
-      const code = document.getElementById('reset-code').value;
-      const password = document.getElementById('new-password').value;
-  
-      fetch('https://tranquil-aqyr.onrender.com/api/reset-password', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ email, code, password })
-      }).then(res => res.json()).then(data => {
-        if (data.success) {
-          alert('Password reset successful!');
-          closeModal();
-        } else {
-          alert('Invalid code or request expired');
-        }
-      });
-    }
-  </script>
+      function logout() {
+        localStorage.removeItem('spaUser');
+        authButtons.classList.remove('hidden');
+        userButtons.classList.add('hidden');
+        alert("You have logged out.");
+      }
+    
+      function openResetModal() {
+        loginForm.classList.add('hidden');
+        document.getElementById('reset-form').classList.remove('hidden');
+      }
+    
+      function sendResetCode() {
+        const email = document.getElementById('reset-email').value;
+    
+        fetch('https://tranquil-aqyr.onrender.com/api/send-reset-code', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ email })
+        }).then(res => res.json()).then(data => {
+          if (data.success) {
+            alert('Reset code sent to email!');
+            document.getElementById('verify-code-form').classList.remove('hidden');
+          } else {
+            alert('Email not found');
+          }
+        });
+      }
+    
+      function verifyResetCode() {
+        const email = document.getElementById('reset-email').value;
+        const code = document.getElementById('reset-code').value;
+        const password = document.getElementById('new-password').value;
+    
+        fetch('https://tranquil-aqyr.onrender.com/api/reset-password', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ email, code, password })
+        }).then(res => res.json()).then(data => {
+          if (data.success) {
+            alert('Password reset successful!');
+            closeModal();
+          } else {
+            alert('Invalid code or request expired');
+          }
+        });
+      }
+    </script>
 
 </body>
 </html>
