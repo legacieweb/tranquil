@@ -275,39 +275,39 @@ cron.schedule('* * * * *', async () => {
     }
   }
 
-  // Find appointments that ended 2 hours ago to send a thank you
-  const twoHoursAgo = new Date(now.getTime() - (2 * 60 * 60 * 1000));
-  const twoHoursAgoMinus5Min = new Date(now.getTime() - (2 * 60 * 60 * 1000) - (5 * 60 * 1000));
+// Find appointments that ended 2 hours ago
+const twoHoursAgo = new Date(now.getTime() - (2 * 60 * 60 * 1000));
+const twoHoursAgoPlus5Min = new Date(twoHoursAgo.getTime() + (5 * 60 * 1000));
 
-  const thankYouAppointments = await Appointment.find({
-    datetime: { $gte: twoHoursAgoMinus5Min, $lte: twoHoursAgo },
-    status: 'active',
-    thankYouSent: false
-  });
+const thankYouAppointments = await Appointment.find({
+  datetime: { $gte: twoHoursAgo, $lte: twoHoursAgoPlus5Min },
+  status: 'active',
+  thankYouSent: false
+});
 
-  for (let app of thankYouAppointments) {
-    try {
-      await transporter.sendMail({
-        from: 'iyonicorp@gmail.com',
-        to: app.email,
-        subject: '🙏 Thank You for Visiting Tranquil Essence Spa',
-        html: `
-          <h1>Thank You, ${app.name}!</h1>
-          <p>We hope you enjoyed your <strong>${app.service}</strong> session today.</p>
-          <p>It was a pleasure having you at Tranquil Essence Spa. 🌿</p>
-          <p>We look forward to welcoming you again for more relaxation and rejuvenation! 🌺</p>
-          <br/>
-          <p><em>Stay serene,</em><br><strong>Tranquil Essence Spa Team</strong></p>
-        `
-      });
+for (let app of thankYouAppointments) {
+  try {
+    await transporter.sendMail({
+      from: 'iyonicorp@gmail.com',
+      to: app.email,
+      subject: '🙏 Thank You for Visiting Tranquil Essence Spa',
+      html: `
+        <h1>Thank You, ${app.name}!</h1>
+        <p>We hope you enjoyed your <strong>${app.service}</strong> session today.</p>
+        <p>It was a pleasure having you at Tranquil Essence Spa. 🌿</p>
+        <p>We look forward to welcoming you again for more relaxation and rejuvenation! 🌺</p>
+        <br/>
+        <p><em>Stay serene,</em><br><strong>Tranquil Essence Spa Team</strong></p>
+      `
+    });
 
-      app.thankYouSent = true;
-      await app.save();
-      console.log(`✅ Thank you email sent to ${app.email}`);
-    } catch (error) {
-      console.error('❌ Error sending thank you email:', error);
-    }
+    app.thankYouSent = true;
+    await app.save();
+    console.log(`✅ Thank you email sent to ${app.email}`);
+  } catch (error) {
+    console.error('❌ Error sending thank you email:', error);
   }
+}
 });
 
 

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Dashboard - Tranquil Essence Spa</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Open Sans', sans-serif;
@@ -13,242 +14,237 @@
     }
   </style>
 </head>
-<body class="bg-gradient-to-tr from-purple-100 via-pink-50 to-white min-h-screen p-8">
+<body class="bg-gradient-to-tr from-purple-100 via-pink-50 to-white min-h-screen p-4 sm:p-8">
 
-  <div class="max-w-5xl mx-auto">
-    <!-- Home Button -->
-<div class="text-center mb-6">
-  <a href="https://tranquil.iyonicorp.com" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-full transition duration-300">
-    ⬅️ Home
-  </a>
-</div>
-    <!-- User Info -->
-    <div class="text-center mb-10">
-      <h1 id="user-name" class="text-4xl font-bold text-purple-700 mb-2"></h1>
-      <p id="user-email" class="text-gray-600 text-lg"></p>
-    </div>
+<div class="max-w-5xl mx-auto">
 
-    <!-- Appointments Section -->
-    <h2 class="text-3xl font-bold text-gray-800 mb-6">Your Appointments</h2>
-    <div id="appointments" class="space-y-6"></div>
+  <!-- Home Button -->
+  <div class="text-center mb-6">
+    <a href="https://tranquil.iyonicorp.com" 
+       class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-full transition text-sm sm:text-base">
+      ⬅️ Home
+    </a>
   </div>
 
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const email = localStorage.getItem('spaUserEmail');
-      const name = localStorage.getItem('spaUserName') || 'Welcome';
-    
-      if (!email) {
-        alert('Please login first!');
-        window.location.href = '/';
-        return;
-      }
-    
-      document.getElementById('user-name').textContent = `Hello, ${name} 👋`;
-      document.getElementById('user-email').textContent = email;
-    
-      fetch('https://tranquil-aqyr.onrender.com/api/my-appointments', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ email })
-      })
-      .then(res => res.json())
-      .then(data => {
-        const appointmentsDiv = document.getElementById('appointments');
-    
-        if (data.appointments.length === 0) {
-          appointmentsDiv.innerHTML = '<p class="text-gray-500 text-center">No appointments booked yet.</p>';
-          return;
-        }
-    
-        data.appointments.forEach(app => {
-          const appointmentDiv = document.createElement('div');
-          appointmentDiv.className = 'p-6 bg-white shadow-lg rounded-xl transition hover:scale-105 transform duration-300';
-    
-          const appointmentDate = new Date(app.datetime);
-    
-          appointmentDiv.innerHTML = `
-            <h3 class="text-2xl font-bold text-purple-700 mb-2">${app.service}</h3>
-            <p class="text-gray-700 mb-1">Date: ${appointmentDate.toLocaleString()}</p>
-            <p class="text-gray-500 mb-3">Phone: ${app.phone}</p>
-    
-            <div class="flex gap-4 mb-4">
-              ${app.status !== 'canceled' ? `
-                <button id="cancel-${app._id}" onclick="cancelAppointment('${app._id}')" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Cancel</button>
-              ` : `<span class="text-red-500 font-semibold">Canceled</span>`}
-              
-              <button id="reschedule-${app._id}-btn" onclick="showReschedule('${app._id}')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Reschedule</button>
-            </div>
-    
-            <div id="reschedule-${app._id}" class="hidden mt-2">
-              <input type="datetime-local" id="new-time-${app._id}" class="border p-2 rounded mb-2 block mx-auto">
-              <button onclick="confirmReschedule('${app._id}')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-2">Confirm New Time</button>
-            </div>
-    
-            <div class="bg-purple-50 p-3 rounded-lg text-center mt-4">
-              <span class="text-sm text-gray-600">Time left:</span>
-              <div class="text-lg font-semibold text-purple-700" id="timer-${app._id}">Calculating...</div>
-              <div id="ended-message-${app._id}" class="text-green-700 font-medium mt-2 hidden">✨ We hope you enjoyed your session!</div>
-            </div>
-          `;
-    
-          appointmentsDiv.appendChild(appointmentDiv);
-    
-          // 🔥 Delay until DOM is ready, then call startCountdown
-          setTimeout(() => {
-            if (app.status !== 'canceled') {
-              startCountdown(`timer-${app._id}`, appointmentDate, app._id);
-            }
-          }, 50);
-        });
-    
-      }).catch(err => {
-        console.error(err);
-        alert('Server error, please try again later.');
-      });
-    });
-    
-    function startCountdown(timerId, endTime, appointmentId) {
-      const timerElement = document.getElementById(timerId);
-      const cancelButton = document.getElementById(`cancel-${appointmentId}`);
-      const rescheduleButton = document.getElementById(`reschedule-${appointmentId}-btn`);
-      const endedMessage = document.getElementById(`ended-message-${appointmentId}`);
-    
-      let interval;
-    
-      function updateTimer() {
-        const now = new Date();
-        const diffToStart = endTime - now;
-        const diffSinceStart = now - endTime;
-    
-        if (diffToStart > 3600000) {
-          // Appointment is more than 1 hour away
-          const hours = Math.floor(diffToStart / (1000 * 60 * 60));
-          const minutes = Math.floor((diffToStart % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((diffToStart % (1000 * 60)) / 1000);
-    
-          timerElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
-    
-          if (cancelButton) {
-            cancelButton.disabled = false;
-            cancelButton.classList.remove('opacity-50', 'cursor-not-allowed');
-            cancelButton.setAttribute('onclick', `cancelAppointment('${appointmentId}')`);
-          }
-          if (rescheduleButton) {
-            rescheduleButton.disabled = false;
-            rescheduleButton.classList.remove('opacity-50', 'cursor-not-allowed');
-            rescheduleButton.setAttribute('onclick', `showReschedule('${appointmentId}')`);
-          }
-    
-        } else if (diffToStart > 0 && diffToStart <= 3600000) {
-          // Less than 1 hour left before appointment
-          timerElement.textContent = "Less than 1 Hour Left!";
-          if (cancelButton) {
-            cancelButton.disabled = true;
-            cancelButton.classList.add('opacity-50', 'cursor-not-allowed');
-            cancelButton.removeAttribute('onclick');
-          }
-          if (rescheduleButton) {
-            rescheduleButton.disabled = true;
-            rescheduleButton.classList.add('opacity-50', 'cursor-not-allowed');
-            rescheduleButton.removeAttribute('onclick');
-          }
-    
-        } else if (diffSinceStart <= (2 * 60 * 60 * 1000)) {
-          // Appointment is ongoing (within 2 hours)
-          timerElement.textContent = "Appointment in Progress...";
-    
-        } else {
-          // Appointment has ended
-          timerElement.textContent = "Appointment Ended";
-    
-          if (cancelButton) {
-            cancelButton.disabled = true;
-            cancelButton.classList.add('opacity-50', 'cursor-not-allowed');
-            cancelButton.removeAttribute('onclick');
-          }
-          if (rescheduleButton) {
-            rescheduleButton.disabled = true;
-            rescheduleButton.classList.add('opacity-50', 'cursor-not-allowed');
-            rescheduleButton.removeAttribute('onclick');
-          }
-    
-          if (endedMessage) {
-            endedMessage.classList.remove('hidden');
-          }
-    
-          clearInterval(interval);
-        }
-      }
-    
-      interval = setInterval(updateTimer, 1000);
-      updateTimer(); // First immediate run
+  <!-- User Info -->
+  <div class="text-center mb-10">
+    <h1 id="user-name" class="text-3xl sm:text-4xl font-bold text-purple-700 mb-2"></h1>
+    <p id="user-email" class="text-gray-600 text-lg sm:text-xl"></p>
+  </div>
+
+  <!-- Appointments Section -->
+  <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">Your Appointments</h2>
+  <div id="appointments" class="space-y-6"></div>
+
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const email = localStorage.getItem('spaUserEmail');
+  const name = localStorage.getItem('spaUserName') || 'Welcome';
+
+  if (!email) {
+    alert('Please login first!');
+    window.location.href = '/';
+    return;
+  }
+
+  document.getElementById('user-name').textContent = `Hello, ${name} 👋`;
+  document.getElementById('user-email').textContent = email;
+
+  fetch('https://tranquil-aqyr.onrender.com/api/my-appointments', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ email })
+  })
+  .then(res => res.json())
+  .then(data => {
+    const appointmentsDiv = document.getElementById('appointments');
+
+    if (data.appointments.length === 0) {
+      appointmentsDiv.innerHTML = '<p class="text-gray-500 text-center">No appointments booked yet.</p>';
+      return;
     }
-    
-    function cancelAppointment(id) {
-      const cancelButton = document.querySelector(`button[onclick="cancelAppointment('${id}')"]`);
-      if (cancelButton) cancelButton.disabled = true;
-    
-      if (confirm("Are you sure you want to cancel this appointment?")) {
-        fetch('https://tranquil-aqyr.onrender.com/api/cancel-appointment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id })
-        }).then(res => res.json()).then(data => {
-          if (data.success) {
-            alert('Appointment canceled.');
-            window.location.reload();
-          } else {
-            alert('Failed to cancel appointment.');
-            if (cancelButton) cancelButton.disabled = false;
-          }
-        }).catch(err => {
-          console.error(err);
-          if (cancelButton) cancelButton.disabled = false;
-        });
+
+    data.appointments.forEach(app => {
+      const appointmentDate = new Date(app.datetime);
+
+      const appointmentDiv = document.createElement('div');
+      appointmentDiv.className = 'p-6 bg-white shadow-lg rounded-xl transition hover:scale-105 transform duration-300';
+
+      appointmentDiv.innerHTML = `
+        <h3 class="text-xl sm:text-2xl font-bold text-purple-700 mb-2">${app.service}</h3>
+        <p class="text-gray-700 mb-1 text-sm sm:text-base">Date: ${appointmentDate.toLocaleString()}</p>
+        <p class="text-gray-500 mb-3 text-sm sm:text-base">Phone: ${app.phone}</p>
+
+        <div class="flex flex-col sm:flex-row gap-4 mb-4">
+          ${app.status !== 'canceled' ? `
+            <button id="cancel-${app._id}" onclick="cancelAppointment('${app._id}')" 
+              class="flex-1 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 text-sm sm:text-base">
+              Cancel
+            </button>
+          ` : `<span class="flex-1 text-red-500 font-semibold text-center">Canceled</span>`}
+
+          <button id="reschedule-${app._id}-btn" onclick="showReschedule('${app._id}')" 
+            class="flex-1 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm sm:text-base">
+            Reschedule
+          </button>
+        </div>
+
+        <div id="reschedule-${app._id}" class="hidden mt-2">
+          <input type="datetime-local" id="new-time-${app._id}" class="w-full border p-2 rounded mb-2">
+          <button onclick="confirmReschedule('${app._id}')" 
+            class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 mt-2 text-sm sm:text-base">
+            Confirm New Time
+          </button>
+        </div>
+
+        <div class="bg-purple-50 p-3 rounded-lg text-center mt-4">
+          <span class="text-sm text-gray-600">Time left:</span>
+          <div class="text-lg font-semibold text-purple-700" id="timer-${app._id}">Loading...</div>
+          <div id="ended-message-${app._id}" class="text-green-700 font-medium mt-2 hidden">✨ We hope you enjoyed your session!</div>
+        </div>
+      `;
+
+      appointmentsDiv.appendChild(appointmentDiv);
+
+      if (app.status !== 'canceled') {
+        startCountdown(`timer-${app._id}`, appointmentDate, app._id);
+      }
+    });
+
+  }).catch(err => {
+    console.error(err);
+    alert('Server error, please try again later.');
+  });
+});
+
+function startCountdown(timerId, appointmentDate, appointmentId) {
+  const timerElement = document.getElementById(timerId);
+  const cancelButton = document.getElementById(`cancel-${appointmentId}`);
+  const rescheduleButton = document.getElementById(`reschedule-${appointmentId}-btn`);
+  const endedMessage = document.getElementById(`ended-message-${appointmentId}`);
+
+  let interval;
+
+  function blockButton(button) {
+    if (button) {
+      button.disabled = true;
+      button.classList.add('opacity-50', 'cursor-not-allowed');
+      button.removeAttribute('onclick');
+    }
+  }
+
+  function enableButton(button, action) {
+    if (button) {
+      button.disabled = false;
+      button.classList.remove('opacity-50', 'cursor-not-allowed');
+      button.setAttribute('onclick', action);
+    }
+  }
+
+  function updateTimer() {
+    const now = new Date();
+    const diffToStart = appointmentDate - now;
+    const diffSinceStart = now - appointmentDate;
+
+    if (diffToStart > 3600000) {
+      const hours = Math.floor(diffToStart / (1000 * 60 * 60));
+      const minutes = Math.floor((diffToStart % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diffToStart % (1000 * 60)) / 1000);
+      timerElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
+
+      enableButton(cancelButton, `cancelAppointment('${appointmentId}')`);
+      enableButton(rescheduleButton, `showReschedule('${appointmentId}')`);
+
+    } else if (diffToStart > 0 && diffToStart <= 3600000) {
+      timerElement.textContent = "Less than 1 Hour Left!";
+      blockButton(cancelButton);
+      blockButton(rescheduleButton);
+
+    } else if (diffSinceStart <= (2 * 60 * 60 * 1000)) {
+      timerElement.textContent = "Appointment in Progress...";
+      blockButton(cancelButton);
+      blockButton(rescheduleButton);
+
+    } else {
+      timerElement.textContent = "Appointment Ended";
+      blockButton(cancelButton);
+      blockButton(rescheduleButton);
+      if (endedMessage) {
+        endedMessage.classList.remove('hidden');
+      }
+      clearInterval(interval);
+    }
+  }
+
+  interval = setInterval(updateTimer, 1000);
+  updateTimer();
+}
+
+function cancelAppointment(id) {
+  const cancelButton = document.querySelector(`button[onclick="cancelAppointment('${id}')"]`);
+  if (cancelButton) cancelButton.disabled = true;
+
+  if (confirm("Are you sure you want to cancel this appointment?")) {
+    fetch('https://tranquil-aqyr.onrender.com/api/cancel-appointment', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ id })
+    }).then(res => res.json()).then(data => {
+      if (data.success) {
+        alert('Appointment canceled.');
+        window.location.reload();
       } else {
+        alert('Failed to cancel appointment.');
         if (cancelButton) cancelButton.disabled = false;
       }
+    }).catch(err => {
+      console.error(err);
+      if (cancelButton) cancelButton.disabled = false;
+    });
+  } else {
+    if (cancelButton) cancelButton.disabled = false;
+  }
+}
+
+function showReschedule(id) {
+  document.getElementById(`reschedule-${id}`).classList.remove('hidden');
+}
+
+function confirmReschedule(id) {
+  const rescheduleButton = document.querySelector(`#reschedule-${id} button`);
+  rescheduleButton.disabled = true;
+  rescheduleButton.textContent = "Rescheduling...";
+
+  const newDatetime = document.getElementById(`new-time-${id}`).value;
+  if (!newDatetime) {
+    alert("Please select a new date and time.");
+    rescheduleButton.disabled = false;
+    rescheduleButton.textContent = "Confirm New Time";
+    return;
+  }
+
+  fetch('https://tranquil-aqyr.onrender.com/api/reschedule-appointment', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ id, newDatetime })
+  }).then(res => res.json()).then(data => {
+    if (data.success) {
+      alert('Appointment rescheduled.');
+      window.location.reload();
+    } else {
+      alert('Failed to reschedule appointment.');
+      rescheduleButton.disabled = false;
+      rescheduleButton.textContent = "Confirm New Time";
     }
-    
-    function showReschedule(id) {
-      document.getElementById(`reschedule-${id}`).classList.remove('hidden');
-    }
-    
-    function confirmReschedule(id) {
-      const rescheduleButton = document.querySelector(`#reschedule-${id} button`);
-      rescheduleButton.disabled = true;
-      rescheduleButton.textContent = "Rescheduling...";
-    
-      const newDatetime = document.getElementById(`new-time-${id}`).value;
-      if (!newDatetime) {
-        alert("Please select a new date and time.");
-        rescheduleButton.disabled = false;
-        rescheduleButton.textContent = "Confirm New Time";
-        return;
-      }
-    
-      fetch('https://tranquil-aqyr.onrender.com/api/reschedule-appointment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, newDatetime })
-      }).then(res => res.json()).then(data => {
-        if (data.success) {
-          alert('Appointment rescheduled.');
-          window.location.reload();
-        } else {
-          alert('Failed to reschedule appointment.');
-          rescheduleButton.disabled = false;
-          rescheduleButton.textContent = "Confirm New Time";
-        }
-      }).catch(err => {
-        console.error(err);
-        rescheduleButton.disabled = false;
-        rescheduleButton.textContent = "Confirm New Time";
-      });
-    }
-    </script>
-    
-  
+  }).catch(err => {
+    console.error(err);
+    rescheduleButton.disabled = false;
+    rescheduleButton.textContent = "Confirm New Time";
+  });
+}
+</script>
+
 </body>
 </html>

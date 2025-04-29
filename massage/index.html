@@ -279,7 +279,7 @@ function confirmBooking() {
   }).then(res => res.json()).then(data => {
     if (data.success) {
       alert('Appointment booked successfully! Confirmation email sent.');
-      window.location.href = 'dashboard.html';
+      window.location.href = '../dashboard';
     } else {
       alert('Failed to book appointment.');
       confirmBtn.disabled = false;

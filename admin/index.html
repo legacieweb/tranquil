@@ -4,23 +4,24 @@
   <meta charset="UTF-8">
   <title>Admin Dashboard - Tranquil Essence Spa</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: 'Open Sans', sans-serif; }
     h1, h2, h3 { font-family: 'Playfair Display', serif; }
   </style>
 </head>
 
-<body class="bg-gradient-to-tr from-gray-100 via-purple-50 to-white min-h-screen p-8">
+<body class="bg-gradient-to-tr from-gray-100 via-purple-50 to-white min-h-screen p-4 sm:p-8">
 
 <!-- LOGIN/SIGNUP MODAL -->
-<div id="auth-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center">
+<div id="auth-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
   <div class="bg-white w-full max-w-md rounded-lg shadow-lg p-8 relative">
     <h2 id="auth-title" class="text-2xl font-bold mb-6 text-purple-700 text-center"></h2>
     
     <input id="admin-password" type="password" placeholder="Enter Password" 
-           class="w-full mb-4 px-4 py-2 border rounded" required>
+           class="w-full mb-4 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400" required>
     
-    <button onclick="submitAuth()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded">
+    <button onclick="submitAuth()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded text-sm sm:text-base">
       Submit
     </button>
 
@@ -28,163 +29,207 @@
   </div>
 </div>
 
+<!-- Dashboard -->
 <div class="max-w-7xl mx-auto" id="dashboard" style="display:none;">
-  <h1 class="text-4xl font-bold text-purple-700 text-center mb-10">Admin Panel - All Appointments</h1>
+  <h1 class="text-3xl sm:text-4xl font-bold text-purple-700 text-center mb-10">Tranquil - All Appointments</h1>
 
   <!-- Search Bar -->
   <div class="flex justify-center mb-8">
     <input id="search-input" type="text" placeholder="Search by Name, Email, or Phone"
-           class="w-full max-w-lg px-4 py-2 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400">
+           class="w-full max-w-lg px-4 py-2 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm sm:text-base">
   </div>
 
-  <!-- Appointments -->
+  <!-- Appointments Grid -->
   <div id="user-tiles" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 </div>
-
 <script>
-let groupedData = {};
-let isSignupMode = false;
-
-window.addEventListener('DOMContentLoaded', async () => {
-  const res = await fetch('https://tranquil-aqyr.onrender.com/api/admin-exists');
-  const { exists } = await res.json();
-
-  isSignupMode = !exists;
-  document.getElementById('auth-title').textContent = isSignupMode ? "Set Admin Password" : "Admin Login";
-  document.getElementById('auth-modal').classList.remove('hidden');
-});
-
-async function submitAuth() {
-  const password = document.getElementById('admin-password').value.trim();
-  const errorText = document.getElementById('auth-error');
-
-  if (!password) {
-    errorText.textContent = "Password cannot be empty.";
-    errorText.classList.remove('hidden');
-    return;
-  }
-
-  const endpoint = isSignupMode ? 'admin-signup' : 'admin-login';
-  const res = await fetch(`https://tranquil-aqyr.onrender.com/api/${endpoint}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password })
+  let groupedData = {};
+  let isSignupMode = false;
+  let logoutTimer; // for 20 min
+  let confirmTimer; // for 2 min auto-logout
+  
+  window.addEventListener('DOMContentLoaded', async () => {
+    const isAdminLoggedIn = localStorage.getItem('adminLoggedIn');
+  
+    if (isAdminLoggedIn === 'true') {
+      document.getElementById('dashboard').style.display = 'block';
+      loadAppointments();
+      startLogoutCountdown(); // Start the 20 minutes countdown
+    } else {
+      // Check if admin password exists
+      const res = await fetch('https://tranquil-aqyr.onrender.com/api/admin-exists');
+      const { exists } = await res.json();
+  
+      isSignupMode = !exists;
+      document.getElementById('auth-title').textContent = isSignupMode ? "Set Admin Password" : "Admin Login";
+      document.getElementById('auth-modal').classList.remove('hidden');
+    }
   });
   
-  const data = await res.json();
-
-  if (data.success) {
-    document.getElementById('auth-modal').classList.add('hidden');
-    document.getElementById('dashboard').style.display = 'block';
-    loadAppointments();
-  } else {
-    errorText.textContent = isSignupMode ? "Signup failed. Try again." : "Wrong password.";
-    errorText.classList.remove('hidden');
-  }
-}
-
-function loadAppointments() {
-  fetch('https://tranquil-aqyr.onrender.com/api/all-appointments')
-    .then(res => res.json())
-    .then(data => {
-      groupedData = groupByUser(data.appointments);
-      renderTiles(groupedData);
-    }).catch(err => {
-      console.error(err);
-      alert('Server error, please try again later.');
-    });
-
-  document.getElementById('search-input').addEventListener('input', (e) => {
-    const search = e.target.value.toLowerCase();
-    const filtered = {};
-
-    for (let email in groupedData) {
-      const user = groupedData[email][0];
-      if (
-        user.name?.toLowerCase().includes(search) ||
-        user.email?.toLowerCase().includes(search) ||
-        user.phone?.toLowerCase().includes(search)
-      ) {
-        filtered[email] = groupedData[email];
-      }
+  async function submitAuth() {
+    const password = document.getElementById('admin-password').value.trim();
+    const errorText = document.getElementById('auth-error');
+  
+    if (!password) {
+      errorText.textContent = "Password cannot be empty.";
+      errorText.classList.remove('hidden');
+      return;
     }
-
-    renderTiles(filtered);
-  });
-}
-
-function groupByUser(appointments) {
-  const groups = {};
-  appointments.forEach(app => {
-    if (!groups[app.email]) groups[app.email] = [];
-    groups[app.email].push(app);
-  });
-  return groups;
-}
-
-function getStatusText(app) {
-  const now = new Date();
-  const appTime = new Date(app.datetime);
-  const diffToStart = appTime - now;
-  const diffSinceStart = now - appTime;
-
-  if (app.status === 'canceled') return { text: "Canceled", color: "text-red-600" };
-  if (diffToStart > 0) return { text: "Upcoming", color: "text-purple-600" };
-  if (diffSinceStart <= (2 * 60 * 60 * 1000)) return { text: "In Progress", color: "text-blue-600" };
-  return { text: "Ended", color: "text-gray-500" };
-}
-
-function renderTiles(data) {
-  const container = document.getElementById('user-tiles');
-  container.innerHTML = '';
-
-  if (Object.keys(data).length === 0) {
-    container.innerHTML = '<p class="text-gray-500 text-center w-full col-span-3">No appointments found.</p>';
-    return;
+  
+    const endpoint = isSignupMode ? 'admin-signup' : 'admin-login';
+    const res = await fetch(`https://tranquil-aqyr.onrender.com/api/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+  
+    const data = await res.json();
+  
+    if (data.success) {
+      localStorage.setItem('adminLoggedIn', 'true');
+      document.getElementById('auth-modal').classList.add('hidden');
+      document.getElementById('dashboard').style.display = 'block';
+      loadAppointments();
+      startLogoutCountdown(); // Start 20 minutes countdown after login
+    } else {
+      errorText.textContent = isSignupMode ? "Signup failed. Try again." : "Wrong password.";
+      errorText.classList.remove('hidden');
+    }
   }
-
-  for (let email in data) {
-    const appointments = data[email];
-    const user = appointments[0];
-    const userDiv = document.createElement('div');
-    userDiv.className = 'bg-white p-6 rounded-lg shadow-lg transition hover:scale-105 transform duration-300';
-
-    userDiv.innerHTML = `
-      <h2 class="text-2xl font-bold text-purple-700 mb-2">${user.name || 'Unknown'}</h2>
-      <p class="text-gray-600 mb-1"><strong>Email:</strong> ${user.email}</p>
-      <p class="text-gray-600 mb-1"><strong>Phone:</strong> ${user.phone}</p>
-      <p class="text-gray-600 mb-4"><strong>Appointments:</strong> ${appointments.length}</p>
-
-      <div id="appointments-${user.email}" class="hidden space-y-3 mt-4">
-        ${appointments.map(app => {
-          const statusInfo = getStatusText(app);
-          return `
-            <div class="border p-3 rounded bg-purple-50">
-              <p><strong>Service:</strong> ${app.service}</p>
-              <p><strong>Date:</strong> ${new Date(app.datetime).toLocaleString()}</p>
-              <p><strong>Status:</strong> 
-                <span class="font-semibold ${statusInfo.color}">${statusInfo.text}</span>
-              </p>
-            </div>
-          `;
-        }).join('')}
-      </div>
-
-      <button onclick="toggleAppointments('${user.email}')" 
-        class="mt-4 w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition">
-        View ${appointments.length > 1 ? 'Appointments' : 'Appointment'}
-      </button>
-    `;
-
-    container.appendChild(userDiv);
+  
+  function loadAppointments() {
+    fetch('https://tranquil-aqyr.onrender.com/api/all-appointments')
+      .then(res => res.json())
+      .then(data => {
+        groupedData = groupByUser(data.appointments);
+        renderTiles(groupedData);
+      }).catch(err => {
+        console.error(err);
+        alert('Server error, please try again later.');
+      });
+  
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      const search = e.target.value.toLowerCase();
+      const filtered = {};
+  
+      for (let email in groupedData) {
+        const user = groupedData[email][0];
+        if (
+          user.name?.toLowerCase().includes(search) ||
+          user.email?.toLowerCase().includes(search) ||
+          user.phone?.toLowerCase().includes(search)
+        ) {
+          filtered[email] = groupedData[email];
+        }
+      }
+  
+      renderTiles(filtered);
+    });
   }
-}
-
-function toggleAppointments(email) {
-  const box = document.getElementById(`appointments-${email}`);
-  box.classList.toggle('hidden');
-}
-</script>
-
+  
+  function groupByUser(appointments) {
+    const groups = {};
+    appointments.forEach(app => {
+      if (!groups[app.email]) groups[app.email] = [];
+      groups[app.email].push(app);
+    });
+    return groups;
+  }
+  
+  function getStatusText(app) {
+    const now = new Date();
+    const appTime = new Date(app.datetime);
+    const diffToStart = appTime - now;
+    const diffSinceStart = now - appTime;
+  
+    if (app.status === 'canceled') return { text: "Canceled", color: "text-red-600" };
+    if (diffToStart > 0) return { text: "Upcoming", color: "text-purple-600" };
+    if (diffSinceStart <= (2 * 60 * 60 * 1000)) return { text: "In Progress", color: "text-blue-600" };
+    return { text: "Ended", color: "text-gray-500" };
+  }
+  
+  function renderTiles(data) {
+    const container = document.getElementById('user-tiles');
+    container.innerHTML = '';
+  
+    if (Object.keys(data).length === 0) {
+      container.innerHTML = '<p class="text-gray-500 text-center w-full col-span-3">No appointments found.</p>';
+      return;
+    }
+  
+    for (let email in data) {
+      const appointments = data[email];
+      const user = appointments[0];
+      const userDiv = document.createElement('div');
+      userDiv.className = 'bg-white p-6 rounded-lg shadow-lg transition hover:scale-105 transform duration-300';
+  
+      userDiv.innerHTML = `
+        <h2 class="text-2xl font-bold text-purple-700 mb-2">${user.name || 'Unknown'}</h2>
+        <p class="text-gray-600 mb-1"><strong>Email:</strong> ${user.email}</p>
+        <p class="text-gray-600 mb-1"><strong>Phone:</strong> ${user.phone}</p>
+        <p class="text-gray-600 mb-4"><strong>Appointments:</strong> ${appointments.length}</p>
+  
+        <div id="appointments-${user.email}" class="hidden space-y-3 mt-4">
+          ${appointments.map(app => {
+            const statusInfo = getStatusText(app);
+            return `
+              <div class="border p-3 rounded bg-purple-50">
+                <p><strong>Service:</strong> ${app.service}</p>
+                <p><strong>Date:</strong> ${new Date(app.datetime).toLocaleString()}</p>
+                <p><strong>Status:</strong> 
+                  <span class="font-semibold ${statusInfo.color}">${statusInfo.text}</span>
+                </p>
+              </div>
+            `;
+          }).join('')}
+        </div>
+  
+        <button onclick="toggleAppointments('${user.email}')" 
+          class="mt-4 w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition">
+          View ${appointments.length > 1 ? 'Appointments' : 'Appointment'}
+        </button>
+      `;
+  
+      container.appendChild(userDiv);
+    }
+  }
+  
+  function toggleAppointments(email) {
+    const box = document.getElementById(`appointments-${email}`);
+    box.classList.toggle('hidden');
+  }
+  
+  // ====== 🔥 Session Timeout Permission Request ============
+  
+  function startLogoutCountdown() {
+    clearTimeout(logoutTimer);
+    logoutTimer = setTimeout(showPermissionModal, 20 * 60 * 1000); // 20 minutes
+  }
+  
+  function showPermissionModal() {
+    if (confirm("You have been inactive. Do you want to stay logged in?")) {
+      // User clicked YES
+      clearTimeout(confirmTimer); // Cancel auto-logout
+      startLogoutCountdown(); // Restart 20 min timer
+    } else {
+      // User clicked NO
+      logoutAdmin();
+    }
+  
+    // If user does NOT respond in 2 mins → force logout
+    confirmTimer = setTimeout(() => {
+      logoutAdmin();
+    }, 2 * 60 * 1000); // 2 minutes
+  }
+  
+  function logoutAdmin() {
+    localStorage.removeItem('adminLoggedIn');
+    alert('Session expired. You have been logged out.');
+    window.location.reload();
+  }
+  
+  </script>
+  
+  
 </body>
 </html>
